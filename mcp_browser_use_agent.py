@@ -20,20 +20,21 @@ async def execute_agent():
     async with MCPServerStdio(
         cache_tools_list=True,
         params={
-          "command": "uvx",
-          "args": ["mcp-server-time", "--local-timezone", "America/New_York"],
-        }
+          "command": "npx",
+          "args": ["@playwright/mcp@latest"],
+        },
+        client_session_timeout_seconds= 120,
     ) as server:
 
         agent=Agent(
             model=model,
             name="Assistant",
-            instructions="Use the tools to achieve the tasks.",
+            instructions="Use browser and other tools to achieve the tasks.",
             mcp_servers=[server]
         )
         tools = await server.list_tools(run_context, agent)
 
-        result = await Runner.run(agent, "What time is it in New York?")
+        result = await Runner.run(agent, "go to sina.com and get me today's news headlines")
         print(result.final_output)
 
 
